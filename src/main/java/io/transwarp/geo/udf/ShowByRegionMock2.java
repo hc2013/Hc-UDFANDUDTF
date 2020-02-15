@@ -7,20 +7,15 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
-import org.apache.hadoop.io.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * created by hanchun on 2020-02-14
- */
-public class ShowByRegionUDF extends GenericUDTF {
+public class ShowByRegionMock2 extends GenericUDTF {
 
   private final int argsCount = 8;
   private final int retCount = 8;
-  private ShowByRegionApi showByRegionApi = new ShowByRegionApi();
-  private Object forwardColObj[] = new Object[retCount];
+  private transient Object forwardColObj[] = new Object[retCount];
 
   public StructObjectInspector initialize(ObjectInspector[] argOIs) throws UDFArgumentException {
     if (argOIs.length != argsCount) {
@@ -59,32 +54,22 @@ public class ShowByRegionUDF extends GenericUDTF {
 
   public void process(Object[] args) throws HiveException {
 
-    List<Long> timeList = (List<Long>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaLongObjectInspector).getList(args[0]);
-    List<Float> lonList = (List<Float>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaFloatObjectInspector).getList(args[1]);
-    List<Float> latList = (List<Float>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaFloatObjectInspector).getList(args[2]);
-    List<Text> provIdList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[3]);
-    List<Text> areaIdList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[4]);
-    List<Text> districtIdList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[5]);
-    List<Text> lacList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[6]);
-    List<Text> ciList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[7]);
-
-    ShowByRegionApi.ListResult result = showByRegionApi.showByRegion(timeList, lonList, latList, provIdList, areaIdList, districtIdList, lacList, ciList);
-    forwardColObj[0] = result.getLatest_sh_time();
-    forwardColObj[1] = result.getPass_city();
-    forwardColObj[2] = result.getPass_time();
-    forwardColObj[3] = result.getEarliest_city_time();
-    forwardColObj[4] = result.getLatest_city_time();
-    forwardColObj[5] = result.getDuration_time();
-    forwardColObj[6] = result.getSpeed();
-    forwardColObj[7] = result.getTransportation();
+    long l = 111L;
+    List<String> strs = new ArrayList<String>();
+    strs.add("ok");
+    List<Long> longs = new ArrayList<Long>();
+    longs.add(333L);
+    List<Float> floats = new ArrayList<Float>();
+    floats.add(11.11f);
+    forwardColObj[0] = l;
+    forwardColObj[1] = strs;
+    forwardColObj[2] = strs;
+    forwardColObj[3] = longs;
+    forwardColObj[4] = longs;
+    forwardColObj[5] = longs;
+    forwardColObj[6] = floats;
+    forwardColObj[7] = strs;
+    forward(forwardColObj);
   }
 
   public void close() throws HiveException {

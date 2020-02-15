@@ -2,6 +2,9 @@ package io.transwarp.geo.udf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.hadoop.io.FloatWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 /**
  * Created by hang.li@transwarp.io on 20-2-14.
@@ -11,9 +14,9 @@ public class ShowByRegionApi {
     public ShowByRegionApi() {
     }
 
-    public ListResult showByRegion(List<Long> time_list, List<Float> longitude_list
-      , List<Float> latitude_list, List<Text> prov_id_list, List<Text> area_id_list,
-                                   List<Text> district_id_list, List<Text> lac_list, List<Text> ci_list) {
+    public ListResult showByRegion(List<LongWritable> time_list, List<FloatWritable> longitude_list
+      , List<FloatWritable> latitude_list, List<Text> prov_id_list,
+                                   List<Text> area_id_list, List<Text> district_id_list, List<Text> lac_list, List<Text> ci_list) {
 
         List<ShowByRegionResult> resultList = new ArrayList();
 
@@ -23,37 +26,51 @@ public class ShowByRegionApi {
 
         long sh_time = 0L;
         //Initialize start result @ area_id_list
-        String regionPreviousStr = area_id_list.get(0).toString();
-        Float[] previousLoc = new Float[]{longitude_list.get(0), latitude_list.get(0)};
-        if (regionPreviousStr.equals("031")) {
-            sh_time = time_list.get(0);
+        String regionPreviousStr = null;
+        try {
+            regionPreviousStr = area_id_list.get(0).toString();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Encounter error on line 30 to String, execep: " + e.getMessage(), e);
         }
-        ShowByRegionResult result = new ShowByRegionResult(regionPreviousStr, time_list.get(0));
+        Float[] previousLoc = new Float[]{longitude_list.get(0).get(), latitude_list.get(0).get()};
+        if (regionPreviousStr.equals("031")) {
+            sh_time = time_list.get(0).get();
+        }
+        ShowByRegionResult result = new ShowByRegionResult(regionPreviousStr, time_list.get(0).get());
         float sectionDistance = 0.0F;
         for (int i = 1; i < time_list.size(); i++) {
 
-            String regionCurrentStr = area_id_list.get(i).toString();
+            String regionCurrentStr = null;
+            try {
+                regionCurrentStr = area_id_list.get(i).toString();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Encounter error on line 44 to String, execep: " + e.getMessage(), e);
+            }
             if (regionPreviousStr.equals("031")) {
-                sh_time = time_list.get(i);
+                sh_time = time_list.get(i).get();
             }
 
             if (regionCurrentStr.equals(regionPreviousStr)) {
                 //Accumulate distance
-                sectionDistance += calculateDistance(previousLoc, longitude_list.get(i), latitude_list.get(i));
+                sectionDistance += calculateDistance(previousLoc, longitude_list.get(i).get(), latitude_list.get(i).get());
             } else {
                 //wrap info in result
-                wrapResult(result, time_list.get(i - 1), sectionDistance);
+                wrapResult(result, time_list.get(i - 1).get(), sectionDistance);
                 resultList.add(result);
-                result = new ShowByRegionResult(regionCurrentStr, time_list.get(i));
-                regionPreviousStr = area_id_list.get(i).toString();
+                result = new ShowByRegionResult(regionCurrentStr, time_list.get(i).get());
+                try {
+                    regionPreviousStr = area_id_list.get(i).toString();
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Encounter error on line 44 to String, execep: " + e.getMessage(), e);
+                }
                 sectionDistance = 0.0F;
             }
 
-            previousLoc = new Float[]{longitude_list.get(i), latitude_list.get(i)};
+            previousLoc = new Float[]{longitude_list.get(i).get(), latitude_list.get(i).get()};
         }
 
         if (result.getComeOut() == 0L) {
-            wrapResult(result, time_list.get(time_list.size() - 1), sectionDistance);
+            wrapResult(result, time_list.get(time_list.size() - 1).get(), sectionDistance);
             resultList.add(result);
         }
 
