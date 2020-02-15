@@ -2,7 +2,7 @@ package io.transwarp.geo.udf;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.hadoop.io.Text;
 /**
  * Created by hang.li@transwarp.io on 20-2-14.
  */
@@ -12,9 +12,8 @@ public class ShowByRegionApi {
     }
 
     public ListResult showByRegion(List<Long> time_list, List<Float> longitude_list
-      , List<Float> latitude_list, List<String> prov_id_list,
-                                   List<String> area_id_list, List<String> district_id_list,
-                                   List<String> lac_list, List<String> ci_list) {
+      , List<Float> latitude_list, List<Text> prov_id_list, List<Text> area_id_list,
+                                   List<Text> district_id_list, List<Text> lac_list, List<Text> ci_list) {
 
         List<ShowByRegionResult> resultList = new ArrayList();
 
@@ -24,7 +23,7 @@ public class ShowByRegionApi {
 
         long sh_time = 0L;
         //Initialize start result @ area_id_list
-        String regionPreviousStr = area_id_list.get(0);
+        String regionPreviousStr = area_id_list.get(0).toString();
         Float[] previousLoc = new Float[]{longitude_list.get(0), latitude_list.get(0)};
         if (regionPreviousStr.equals("031")) {
             sh_time = time_list.get(0);
@@ -33,7 +32,7 @@ public class ShowByRegionApi {
         float sectionDistance = 0.0F;
         for (int i = 1; i < time_list.size(); i++) {
 
-            String regionCurrentStr = area_id_list.get(i);
+            String regionCurrentStr = area_id_list.get(i).toString();
             if (regionPreviousStr.equals("031")) {
                 sh_time = time_list.get(i);
             }
@@ -46,7 +45,7 @@ public class ShowByRegionApi {
                 wrapResult(result, time_list.get(i - 1), sectionDistance);
                 resultList.add(result);
                 result = new ShowByRegionResult(regionCurrentStr, time_list.get(i));
-                regionPreviousStr = area_id_list.get(i);
+                regionPreviousStr = area_id_list.get(i).toString();
                 sectionDistance = 0.0F;
             }
 

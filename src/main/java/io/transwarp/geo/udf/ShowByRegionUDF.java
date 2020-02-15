@@ -59,8 +59,8 @@ public class ShowByRegionUDF extends GenericUDTF {
 
   public void process(Object[] args) throws HiveException {
 
-    List<Text> timeList = (List<Text>) ObjectInspectorFactory.getStandardListObjectInspector(
-      PrimitiveObjectInspectorFactory.javaStringObjectInspector).getList(args[0]);
+    List<Long> timeList = (List<Long>) ObjectInspectorFactory.getStandardListObjectInspector(
+      PrimitiveObjectInspectorFactory.javaLongObjectInspector).getList(args[0]);
     List<Float> lonList = (List<Float>) ObjectInspectorFactory.getStandardListObjectInspector(
       PrimitiveObjectInspectorFactory.javaFloatObjectInspector).getList(args[1]);
     List<Float> latList = (List<Float>) ObjectInspectorFactory.getStandardListObjectInspector(
