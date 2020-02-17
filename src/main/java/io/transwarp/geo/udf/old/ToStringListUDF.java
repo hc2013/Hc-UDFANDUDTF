@@ -1,4 +1,4 @@
-package io.transwarp.geo.udf;
+package io.transwarp.geo.udf.old;
 
 import org.apache.hadoop.hive.ql.exec.UDF;
 

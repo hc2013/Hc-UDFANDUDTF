@@ -1,4 +1,4 @@
-package io.transwarp.geo.udf;
+package io.transwarp.geo.udf.old;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.apache.hadoop.io.Text;
 /**
  * Created by hang.li@transwarp.io on 20-2-14.
  */
-public class ShowByRegionApi {
+public class NewShowByRegionApi {
 
-    public ShowByRegionApi() {
+    public NewShowByRegionApi() {
     }
 
     public ListResult showByRegion(List<LongWritable> time_list, List<FloatWritable> longitude_list
